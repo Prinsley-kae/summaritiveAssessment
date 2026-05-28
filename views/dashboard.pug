@@ -1,0 +1,118 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Technical assessment - Dashboard
+    link(rel='stylesheet' href='/css/pages.css')
+    style.
+      /* Global Styles for Layout */
+      .error-input { border: 2px solid red !important; }
+      .success-input { border: 2px solid green !important; }
+      .alert-success { background-color: #d4edda; color: #155724; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+      .error-text { color: red; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+      .double-input { display: flex; gap: 10px; flex-wrap: wrap; }
+      .input-group { flex: 1; display: flex; flex-direction: column; }
+      
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.7); display: none;
+        justify-content: center; align-items: center; z-index: 9999;
+      }
+      .modal-content {
+        background-color: #48c9c0; color: white; padding: 40px 60px;
+        text-align: center; border-radius: 5px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+
+  body
+    .dashboard
+      .top-section
+        .left-side
+          .sales-card
+            .sales-box
+              h1 UGX 50,000,000
+              p Sales
+            .divider
+            .sales-box
+              h1 UGX 15,000,000
+              p Orders
+          .small-cards
+            .card
+              h2.green= `UGX ${inStockValue.toLocaleString()}`
+              p In stock
+            .card
+              h2.red= outOfStockCount
+              p Out of stock
+        
+        .right-side
+          h2 Add Product
+          if success_msg && success_msg.length > 0
+            .alert.alert-success= success_msg
+
+          form(action='/dashboard/add', method='post' enctype='multipart/form-data')
+            input#productname(type='text' name='name' class=(errors && errors.name ? 'error-input' : (success_msg ? 'success-input' : '')) placeholder='Product Name')
+            if errors && errors.name
+              span.error-text= errors.name
+
+            input#category(type='text' name='category' class=(errors && errors.category ? 'error-input' : (success_msg ? 'success-input' : '')) placeholder='Category')
+            if errors && errors.category
+              span.error-text= errors.category
+
+            input#price(type='number' name='price' class=(errors && errors.price ? 'error-input' : (success_msg ? 'success-input' : '')) placeholder='Price')
+            if errors && errors.price
+              span.error-text= errors.price
+
+            input#quantity(type='number' name='quantity' class=(errors && errors.quantity ? 'error-input' : (success_msg ? 'success-input' : '')) placeholder='Quantity')
+            if errors && errors.quantity
+              span.error-text= errors.quantity
+            
+            .double-input
+              .input-group
+                input#color(type='text' name='color' class=(errors && errors.color ? 'error-input' : (success_msg ? 'success-input' : '')) placeholder='Color')
+                if errors && errors.color
+                  span.error-text= errors.color
+              
+              .input-group
+                input(type='file' name='image' class=(errors && errors.image ? 'error-input' : ''))
+                if errors && errors.image
+                  span.error-text= errors.image
+
+            .buttons
+              button.save-btn(type='submit') SAVE
+              button.clear-btn(type='button' onclick='this.form.reset()') CLEAR
+
+      .table-section
+        table
+          thead
+            tr
+              th ID
+              th NAME
+              th CATEGORY
+              th PRICE(UGX)
+              th QUANTITY
+          tbody
+            each p, index in products
+              tr
+                td= `#${645341 + index}`
+                td= p.name
+                td= p.category
+                td= p.price.toLocaleString()
+                td= p.quantity
+
+    //- Congratulations Modal
+    #successModal.modal-overlay
+      .modal-content
+        h2 CONGRATULATIONS!
+        p You have successfully signed into the Refactory system. Feel at home
+
+    script.
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('success') === 'true') {
+        const modal = document.getElementById('successModal');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.style.display = 'none';
+          window.history.replaceState({}, document.title, "/dashboard");
+        }, 3000);
+      }

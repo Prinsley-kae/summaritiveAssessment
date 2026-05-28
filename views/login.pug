@@ -1,0 +1,115 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+
+    title Technical Assessment - Login
+
+    link(rel='stylesheet', href='/css/style.css')
+
+    style.
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 10px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        color: #666;
+        user-select: none;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .error-input {
+        border: 2px solid red !important;
+      }
+
+      .error-text {
+        color: red;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        display: block;
+      }
+
+      .alert {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+  body
+    form(action='/login', method='post')
+      h2 Login
+
+      // Flash Error
+      if error_msg && error_msg.length > 0
+        .alert.alert-danger= error_msg
+
+      // Email
+      .input-group
+        label(for='email') Email
+
+        input(
+          type='email',
+          name='email',
+          class=(errors && errors.email ? 'error-input' : ''),
+          placeholder='johndoe@domain.com',
+          required
+        )
+
+        if errors && errors.email
+          span.error-text= errors.email
+
+      // Password
+      .input-group
+        label(for='password') Password
+
+        .input-wrapper
+          input#password(
+            type='password',
+            name='password',
+            class=(errors && errors.password ? 'error-input' : ''),
+            placeholder='.............',
+            required
+          )
+
+          span.toggle-password(
+            onclick="togglePassword('password')"
+          ) Show
+
+        if errors && errors.password
+          span.error-text= errors.password
+
+      button(type='submit') LOGIN
+
+      p
+        | Don't have an account?
+        a(href='/signup') Signup
+
+    script.
+      function togglePassword(id) {
+        const input = document.getElementById(id);
+        const toggleBtn = input.nextElementSibling;
+
+        if (input.type === "password") {
+          input.type = "text";
+          toggleBtn.textContent = "Hide";
+        } else {
+          input.type = "password";
+          toggleBtn.textContent = "Show";
+        }
+      }

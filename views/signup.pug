@@ -1,0 +1,129 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Technical Assessment - Signup
+    link(rel='stylesheet', href='/css/style.css')
+    style.
+      /* Global Layout */
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        font-family: sans-serif;
+      }
+      
+      /* Container to hold form and messages */
+      .signup-wrapper {
+        width: 100%;
+        max-width: 400px;
+      }
+
+      /* Alert Styles */
+      .alert { 
+        padding: 10px; 
+        margin-bottom: 15px; 
+        border-radius: 4px; 
+        width: 100%; 
+        box-sizing: border-box; 
+      }
+      .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+      .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+      /* Form and Input Styles */
+      .input-wrapper { position: relative; display: flex; align-items: center; }
+      .toggle-password { position: absolute; right: 10px; cursor: pointer; font-size: 0.8rem; color: #666; user-select: none; }
+      .input-group { margin-bottom: 15px; }
+      .error-input { border: 2px solid red !important; }
+      .error-text { color: red; font-size: 0.8rem; margin-top: 5px; display: block; }
+
+  body
+    .signup-wrapper
+      form(action='/', method='post')
+        h2 Signup
+
+        // Flash Messages: Placed inside the form, after the h2, inheriting form width
+        if success_msg && success_msg.length > 0
+          .alert.alert-success= success_msg
+        if error_msg && error_msg.length > 0
+          .alert.alert-danger= error_msg
+
+        // Fullname
+        .input-group
+          label(for='fullname') Fullname
+          input#fullname(type='text', name='fullname', value=fullname, class=(errors && errors.fullname ? 'error-input' : ''), placeholder='John Doe', required)
+          if errors && errors.fullname
+            span.error-text= errors.fullname
+
+        // Email
+        .input-group
+          label(for='email') Email
+          input#email(type='email', name='email', value=email, class=(errors && errors.email ? 'error-input' : ''), placeholder='johndoe@domain.com', required)
+          if errors && errors.email
+            span.error-text= errors.email
+
+        // Phone number
+        .input-group
+          label(for='phonenumber') Phone number
+          input#phonenumber(type='tel', name='phonenumber', value=phonenumber, class=(errors && errors.phonenumber ? 'error-input' : ''), placeholder='+256770000000', required)
+          if errors && errors.phonenumber
+            span.error-text= errors.phonenumber
+
+        // Password
+        .input-group
+          label(for='password') Password
+          .input-wrapper
+            input#password(type='password', name='password', class=(errors && errors.password ? 'error-input' : ''), placeholder='...............', required)
+            span.toggle-password(onclick="togglePassword('password')") Show
+          if errors && errors.password
+            span.error-text= errors.password
+
+        // Confirm Password
+        .input-group
+          label(for='confirmpassword') Confirm Password
+          .input-wrapper
+            input#confirmpassword(type='password', name='confirmpassword', class=(errors && errors.confirmPassword ? 'error-input' : ''), placeholder='............', required)
+            span.toggle-password(onclick="togglePassword('confirmpassword')") Show
+          if errors && errors.confirmPassword
+            span.error-text= errors.confirmPassword
+
+        button(type='submit') SIGNUP
+
+        p
+          | Have an account? 
+          a(href='/login') Login
+
+    script.
+      function togglePassword(id) {
+        const input = document.getElementById(id);
+        const toggleBtn = input.nextElementSibling;
+        if (input.type === "password") {
+          input.type = "text";
+          toggleBtn.textContent = "Hide";
+        } else {
+          input.type = "password";
+          toggleBtn.textContent = "Show";
+        }
+      }
+
+      // Real-time Validation
+      const phoneInput = document.getElementById('phonenumber');
+      const emailInput = document.getElementById('email');
+
+      phoneInput.addEventListener('input', function() {
+        if (this.value !== "" && !/^\+2567\d{8}$/.test(this.value)) {
+          this.classList.add('error-input');
+        } else {
+          this.classList.remove('error-input');
+        }
+      });
+
+      emailInput.addEventListener('input', function() {
+        if (this.value !== "" && !this.value.includes('@')) {
+          this.classList.add('error-input');
+        } else {
+          this.classList.remove('error-input');
+        }
+      });
